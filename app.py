@@ -26,17 +26,17 @@ def main():
         page_title="Mobile Edge Detection",
         page_icon="📱",
         layout="wide",
-        initial_sidebar_state="auto"  # Better for mobile
+        initial_sidebar_state="auto"
     )
     
-    st.title("📱 Mobile Camera Edge Detection")
+    st.title("Snap & Detect Edges in Real Time!")
     st.markdown("Capture photos from your mobile camera and apply edge detection!")
     
     # Initialize session state
     if 'processed_image' not in st.session_state:
         st.session_state.processed_image = None
     
-    # Sidebar for controls - collapsible on mobile
+    # Sidebar for controls
     with st.sidebar:
         st.header("🔧 Edge Detection Parameters")
         
@@ -74,12 +74,12 @@ def main():
             help="Upper threshold for edge detection"
         )
     
-    # Main content area with mobile-friendly tabs
-    tab1, tab2, tab3 = st.tabs(["📱 Mobile Camera", "📁 Upload Image", "ℹ️ Info"])
+    # Main content area
+    tab1, tab2 = st.tabs([" Mobile Camera", " Upload Image"])
     
     with tab1:
-        st.subheader("📱 Mobile Camera Capture")
-        st.info("📌 Use your mobile camera to take photos and apply edge detection instantly!")
+        st.subheader(" Mobile Camera Capture")
+        st.info(" Use your mobile camera to take photos and apply edge detection instantly!")
         
         # Mobile camera input - works on all devices including mobile
         camera_image = st.camera_input(
@@ -99,10 +99,10 @@ def main():
             # Store processed image in session state
             st.session_state.processed_image = edges
             
-            # Display results - mobile responsive layout
+            # Display results
             st.subheader("📸 Results")
             
-            # Use columns for side-by-side display on larger screens
+            # Use columns for side-by-side display
             col1, col2 = st.columns([1, 1])
             
             with col1:
@@ -126,7 +126,7 @@ def main():
                     st.image(blurred, use_column_width=True, channels="GRAY")
             
             # Download section
-            st.subheader("💾 Download Results")
+            st.subheader(" Download Results")
             
             # Create download buttons
             col1, col2 = st.columns(2)
@@ -136,7 +136,7 @@ def main():
                 buf_orig = io.BytesIO()
                 image.save(buf_orig, format='PNG')
                 st.download_button(
-                    label="📥 Download Original",
+                    label=" Download Original",
                     data=buf_orig.getvalue(),
                     file_name="mobile_original.png",
                     mime="image/png"
@@ -148,27 +148,14 @@ def main():
                 buf_edges = io.BytesIO()
                 edges_pil.save(buf_edges, format='PNG')
                 st.download_button(
-                    label="📥 Download Edges",
+                    label=" Download Edges",
                     data=buf_edges.getvalue(),
                     file_name="mobile_edge_detection.png",
                     mime="image/png"
                 )
-        else:
-            # Instructions for mobile users
-            st.markdown("""
-            ### 📱 How to use on mobile:
-            
-            1. **Tap the camera button** above
-            2. **Allow camera permissions** when prompted
-            3. **Take a photo** using your mobile camera
-            4. **View results** instantly with adjustable parameters
-            5. **Download** processed images to your device
-            
-            ✅ **Works on**: iOS Safari, Android Chrome, and all modern mobile browsers
-            """)
     
     with tab2:
-        st.subheader("📁 Upload and Process Image")
+        st.subheader("Upload and Process Image")
         
         uploaded_file = st.file_uploader(
             "Choose an image from your device...",
@@ -214,63 +201,11 @@ def main():
             edges_pil.save(buf, format='PNG')
             
             st.download_button(
-                label="💾 Download Edge Detection Result",
+                label="Download Edge Detection Result",
                 data=buf.getvalue(),
                 file_name="uploaded_edge_detection.png",
                 mime="image/png"
             )
-    
-    with tab3:
-        st.subheader("ℹ️ About Mobile Edge Detection")
-        
-        st.markdown("""
-        ### 📱 Mobile Camera Features:
-        
-        **✅ What Works:**
-        - **Native mobile camera access** using `st.camera_input`
-        - **Real-time parameter adjustment** via sidebar controls
-        - **Instant processing** after photo capture
-        - **Download results** directly to your mobile device
-        - **Responsive design** optimized for mobile screens
-        
-        **🔧 Edge Detection Process:**
-        1. **Grayscale Conversion**: Simplify image processing
-        2. **Gaussian Blur**: Reduce noise and smooth edges  
-        3. **Canny Edge Detection**: Detect edges using gradient analysis
-        
-        **⚙️ Parameter Tips:**
-        - **Lower thresholds**: Detect more edges (including noise)
-        - **Higher thresholds**: Detect only strong edges
-        - **Larger blur kernel**: More smoothing, fewer noise edges
-        - **Higher sigma**: Stronger blur effect
-        
-        **📱 Mobile Compatibility:**
-        - **iOS Safari**: Full camera support
-        - **Android Chrome**: Full camera support  
-        - **Other mobile browsers**: Most modern browsers supported
-        
-        **🔧 Troubleshooting:**
-        - Allow camera permissions when prompted
-        - Ensure good lighting for better edge detection
-        - Try different parameter values for optimal results
-        - Use landscape mode for better viewing on mobile
-        """)
-        
-        # Performance metrics if image was processed
-        if st.session_state.processed_image is not None:
-            st.subheader("📊 Last Processing Info")
-            edges = st.session_state.processed_image
-            total_pixels = edges.shape[0] * edges.shape[1]
-            edge_pixels = np.count_nonzero(edges)
-            edge_percentage = (edge_pixels / total_pixels) * 100
-            
-            col1, col2, col3 = st.columns(3)
-            with col1:
-                st.metric("Image Size", f"{edges.shape[1]}×{edges.shape}")
-            with col2:
-                st.metric("Edge Pixels", f"{edge_pixels:,}")
-            with col3:
-                st.metric("Edge Density", f"{edge_percentage:.1f}%")
 
 if __name__ == "__main__":
     main()
